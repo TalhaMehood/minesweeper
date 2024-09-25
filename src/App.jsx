@@ -18,7 +18,7 @@ const App = () => {
     setKey((key) => key + 1);
   }, [width, height, mines, totalTiles]);
 
-
+  // Handler for changes in board dimensions
   const handleChange = (setter, value, dimensionType) => {
     const newValue = Math.min(parseInt(value) || limits.MIN, limits.MAX);
 

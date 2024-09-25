@@ -10,17 +10,17 @@ const Board = ({ width, height, mines }) => {
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
 
+  // Handles tile clicks, revealing tiles, and updating game status
   const handleTileClick = (x, y) => {
     if (gameOver || won) return;
+    if (board[x][y].isRevealed) return;
 
     const newBoard = [...board];
     const tile = newBoard[x][y];
 
-    if (tile.isRevealed) return;
-
     if (tile.isMine) {
       tile.isRevealed = true;
-    
+
       newBoard.forEach(row =>
         row.forEach(tile => {
           if (tile.isMine) {
@@ -41,8 +41,8 @@ const Board = ({ width, height, mines }) => {
     }
   };
 
+  // Checks if all non-mine tiles are revealed
   const checkWin = (board) => {
-  
     const totalTiles = width * height;
     const revealedTiles = board.flat().filter(tile => tile.isRevealed).length;
     const mineTiles = board.flat().filter(tile => tile.isMine).length;

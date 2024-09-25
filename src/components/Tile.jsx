@@ -1,24 +1,11 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Returns an empty string, bomb emoji, or the tile's number based on its revealed state and content.
 const getTileContent = (tile) => {
-  if (!tile.isRevealed) {
-    return '';
-  }
-
-  if (tile.isMine) {
-    return '💣';
-  }
-
-  if (tile.number > 0) {
-    return tile.number;
-  }
-
-  if (tile.number === 0) {
-    return '';
-  }
-
-  return '';
+  return !tile.isRevealed ? '' :
+    tile.isMine ? '💣' :
+      tile.number > 0 ? tile.number : '';
 };
 
 const Tile = ({ tile, onClick }) => {

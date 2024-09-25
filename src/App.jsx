@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Board from './components/Board';
+import { dimensionTypes, limits } from './constants';
 
 const App = () => {
   const [width, setWidth] = useState(10);
@@ -10,7 +11,6 @@ const App = () => {
 
   const totalTiles = width * height;
 
-
   useEffect(() => {
     if (mines >= totalTiles) {
       setMines(totalTiles - 1);
@@ -20,14 +20,14 @@ const App = () => {
 
 
   const handleChange = (setter, value, dimensionType) => {
-    const newValue = Math.min(parseInt(value) || 2, 20);
+    const newValue = Math.min(parseInt(value) || limits.MIN, limits.MAX);
 
-    if (dimensionType === 'width') {
+    if (dimensionType === dimensionTypes.WIDTH) {
 
       if (newValue * height <= mines) {
         setMines(newValue * height - 1);
       }
-    } else if (dimensionType === 'height') {
+    } else if (dimensionType === dimensionTypes.HEIGHT) {
 
       if (width * newValue <= mines) {
         setMines(width * newValue - 1);
@@ -46,9 +46,9 @@ const App = () => {
           <input
             type="number"
             value={width}
-            min="2"
-            max="20"
-            onChange={(e) => handleChange(setWidth, e.target.value, 'width')}
+            min={limits.MIN}
+            max={limits.MAX}
+            onChange={(e) => handleChange(setWidth, e.target.value, dimensionTypes.WIDTH)}
             className="border rounded px-2 text-black"
           />
 
@@ -56,13 +56,12 @@ const App = () => {
           <input
             type="number"
             value={height}
-            min="2"
-            max="20"
-            onChange={(e) => handleChange(setHeight, e.target.value, 'height')}
+            min={limits.MIN}
+            max={limits.MAX}
+            onChange={(e) => handleChange(setHeight, e.target.value, dimensionTypes.HEIGHT)}
             className="border rounded px-2 text-black"
           />
 
-          {/* Mines Input */}
           <label>Mines: </label>
           <input
             type="number"
@@ -80,8 +79,6 @@ const App = () => {
           </button>
         </div>
 
-
-        {/* Render the Board */}
         <Board key={key} width={width} height={height} mines={mines} />
       </div>
     </div>

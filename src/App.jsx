@@ -1,35 +1,93 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import Board from './components/Board';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [width, setWidth] = useState(10);
+  const [height, setHeight] = useState(10);
+  const [mines, setMines] = useState(10);
+  const [key, setKey] = useState(0);
+
+
+  const totalTiles = width * height;
+
+
+  useEffect(() => {
+    if (mines >= totalTiles) {
+      setMines(totalTiles - 1);
+    }
+    setKey((key) => key + 1);
+  }, [width, height, mines, totalTiles]);
+
+
+  const handleChange = (setter, value, dimensionType) => {
+    const newValue = parseInt(value) || 2;
+
+    if (dimensionType === 'width') {
+
+      if (newValue * height <= mines) {
+        setMines(newValue * height - 1);
+      }
+    } else if (dimensionType === 'height') {
+
+      if (width * newValue <= mines) {
+        setMines(width * newValue - 1);
+      }
+    }
+
+    setter(newValue);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="min-h-screen bg-gray-800 text-white flex justify-center">
+      <div className="space-y-4 text-center py-20">
+        <h1 className="text-2xl font-bold bg-slate-700">Minesweeper</h1>
+        <div className="space-x-2">
+          {/* Width Input */}
+          <label>Width: </label>
+          <input
+            type="number"
+            value={width}
+            min="2"
+            max="20"
+            onChange={(e) => handleChange(setWidth, e.target.value, 'width')}
+            className="border rounded px-2 text-black"
+          />
 
-export default App
+          {/* Height Input */}
+          <label>Height: </label>
+          <input
+            type="number"
+            value={height}
+            min="2"
+            max="20"
+            onChange={(e) => handleChange(setHeight, e.target.value, 'height')}
+            className="border rounded px-2 text-black"
+          />
+
+          {/* Mines Input */}
+          <label>Mines: </label>
+          <input
+            type="number"
+            value={mines}
+            min="1"
+            max={totalTiles - 1}
+            onChange={(e) => setMines(Math.min(parseInt(e.target.value) || 1, totalTiles - 1))}
+            className="border rounded px-2 text-black"
+          />
+          <button
+            onClick={() => setKey((key) => key + 1)}
+            className="mt-4 bg-slate-500 text-white py-2 px-4 rounded"
+          >
+            Reset Game
+          </button>
+        </div>
+
+
+        {/* Render the Board */}
+        <Board key={key} width={width} height={height} mines={mines} />
+      </div>
+    </div>
+  );
+};
+
+export default App;

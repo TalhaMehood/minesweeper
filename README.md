@@ -75,4 +75,4 @@ If you don't have Node.js installed, follow the [Node.js download and installati
    npm start
    ```
 
-5. Open your browser and go to `http://localhost:5173` to play the game.
+5. Open your browser and go to `http://localhost:5173` to play the game. (Port '5173' can be changed if the port is occupied.)

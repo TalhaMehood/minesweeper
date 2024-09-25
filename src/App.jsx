@@ -20,7 +20,7 @@ const App = () => {
 
 
   const handleChange = (setter, value, dimensionType) => {
-    const newValue = parseInt(value) || 2;
+    const newValue = Math.min(parseInt(value) || 2, 20);
 
     if (dimensionType === 'width') {
 
@@ -42,7 +42,6 @@ const App = () => {
       <div className="space-y-4 text-center py-20">
         <h1 className="text-2xl font-bold bg-slate-700">Minesweeper</h1>
         <div className="space-x-2">
-          {/* Width Input */}
           <label>Width: </label>
           <input
             type="number"
@@ -53,7 +52,6 @@ const App = () => {
             className="border rounded px-2 text-black"
           />
 
-          {/* Height Input */}
           <label>Height: </label>
           <input
             type="number"

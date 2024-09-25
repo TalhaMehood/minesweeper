@@ -1,15 +1,59 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { generateBoard } from '../utils/generateBoard';
+import { gameOverMessages, winningMessages } from '../utils/messages';
+import { getRandomMessage } from '../utils/utils';
 import Tile from './Tile';
 
 const Board = ({ width, height, mines }) => {
   const [board, setBoard] = useState(generateBoard(width, height, mines));
+  const [gameOver, setGameOver] = useState(false);
+  const [won, setWon] = useState(false);
 
-  const handleTileClick = () => {
-    console.log("click")
+  const handleTileClick = (x, y) => {
+    if (gameOver || won) return;
+
+    const newBoard = [...board];
+    const tile = newBoard[x][y];
+
+    if (tile.isRevealed) return;
+
+    if (tile.isMine) {
+      tile.isRevealed = true;
+    
+      newBoard.forEach(row =>
+        row.forEach(tile => {
+          if (tile.isMine) {
+            tile.isRevealed = true;
+          }
+        })
+      );
+      setBoard(newBoard);
+
+      setTimeout(() => {
+        setGameOver(true);
+        alert(getRandomMessage(gameOverMessages));
+      }, 100);
+    } else {
+      tile.isRevealed = true;
+      setBoard(newBoard);
+      checkWin(newBoard);
+    }
   };
 
+  const checkWin = (board) => {
+  
+    const totalTiles = width * height;
+    const revealedTiles = board.flat().filter(tile => tile.isRevealed).length;
+    const mineTiles = board.flat().filter(tile => tile.isMine).length;
+
+    if (revealedTiles === totalTiles - mineTiles) {
+      setTimeout(() => {
+        setWon(true);
+        alert(getRandomMessage(winningMessages));
+      }, 100);
+    }
+  };
 
   return (
     <div className="text-center">

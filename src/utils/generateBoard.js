@@ -8,5 +8,15 @@ export const generateBoard = (width, height, mines) => {
     }))
   );
 
+  let placedMines = 0;
+  while (placedMines < mines) {
+    const x = Math.floor(Math.random() * width);
+    const y = Math.floor(Math.random() * height);
+    if (!board[y][x].isMine) {
+      board[y][x].isMine = true;
+      placedMines++;
+    }
+  }
+
   return board;
 };

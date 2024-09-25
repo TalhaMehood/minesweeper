@@ -18,5 +18,29 @@ export const generateBoard = (width, height, mines) => {
     }
   }
 
+  const directions = [
+    [-1, -1], [-1, 0], [-1, 1],
+    [0, -1], [0, 1],
+    [1, -1], [1, 0], [1, 1]
+  ];
+
+  for (let row = 0; row < height; row++) {
+    for (let col = 0; col < width; col++) {
+      if (!board[row][col].isMine) {
+        let mineCount = 0;
+        directions.forEach(([dx, dy]) => {
+          const newRow = row + dx;
+          const newCol = col + dy;
+          if (newRow >= 0 && newRow < height && newCol >= 0 && newCol < width) {
+            if (board[newRow][newCol].isMine) {
+              mineCount++;
+            }
+          }
+        });
+        board[row][col].number = mineCount;
+      }
+    }
+  }
+
   return board;
 };

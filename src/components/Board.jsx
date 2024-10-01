@@ -43,32 +43,32 @@ const Board = ({ width, height, mines }) => {
   };
 
   // Recursively reveals tiles
-  const revealTile = (board, x, y) => {
-    const stack = [[x, y]]; // Start with the clicked tile
-    const visited = new Set(); // Keep track of visited tiles
+  const revealTile = (board, startX, startY) => {
+    const stack = [[startX, startY]];
+    const visited = new Set();
+    const numRows = board.length;
+    const numCols = board[0].length;
 
     while (stack.length > 0) {
-      const [currentX, currentY] = stack.pop();
+      const [x, y] = stack.pop();
 
-      // If out of bounds or already visited, skip this tile
-      if (currentX < 0 || currentX >= width || currentY < 0 || currentY >= height || visited.has(`${currentX},${currentY}`)) {
+      if (x < 0 || x >= numRows || y < 0 || y >= numCols || visited.has(`${x},${y}`)) {
         continue;
       }
 
-      const tile = board[currentX][currentY];
+      const tile = board[x][y];
+      if (!tile) continue;
       tile.isRevealed = true;
-      visited.add(`${currentX},${currentY}`); // Mark this tile as visited
+      visited.add(`${x},${y}`);
 
-      // If no adjacent mines, add neighboring tiles to the stack
       if (tile.number === 0) {
         directions.forEach(([dx, dy]) => {
-          const newX = currentX + dx;
-          const newY = currentY + dy;
-          stack.push([newX, newY]);
+          stack.push([x + dx, y + dy]);
         });
       }
     }
   };
+
 
   // Checks if all non-mine tiles are revealed
   const checkWin = (board) => {

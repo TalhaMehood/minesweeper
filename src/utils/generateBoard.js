@@ -1,7 +1,5 @@
 import { directions } from '../constants';
 export const generateBoard = (width, height, mines) => {
-  
-  // Initialize the board with all tiles set to non-mined, unrevealed, and with no adjacent mines.
   const board = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => ({
       isMine: false,
@@ -10,28 +8,36 @@ export const generateBoard = (width, height, mines) => {
     }))
   );
 
-  let placedMines = 0;
-  // Place mines randomly on the board until the specified number of mines is reached.
-  while (placedMines < mines) {
-    
-    // x is the column index, y is the row index on the board.
-    const x = Math.floor(Math.random() * width);
-    const y = Math.floor(Math.random() * height);
-    if (!board[y][x].isMine) {
-      board[y][x].isMine = true;
-      placedMines++;
+  // Step 1: Create a flat list of all tile indices (0 to width * height - 1)
+  const totalTileCount = width * height;
+  const tileIndices = Array.from({ length: totalTileCount }, (_, tileIndex) => tileIndex);
 
-      // Update adjacent tiles to increment their adjacent mines count.
-      directions.forEach(([dx, dy]) => {
-        const newRow = y + dy;
-        const newCol = x + dx;
+  // Step 2: Shuffle the tileIndices list 
+  for (let currentIndex = totalTileCount - 1; currentIndex > 0; currentIndex--) {
+    const randomIndex = Math.floor(Math.random() * (currentIndex + 1));
+    [tileIndices[currentIndex], tileIndices[randomIndex]] = [tileIndices[randomIndex], tileIndices[currentIndex]];
+  }  
 
-         // Ensure the adjacent tile is within board boundaries.
-        if (newRow >= 0 && newRow < height && newCol >= 0 && newCol < width) {
-          board[newRow][newCol].number += 1;
-        }
-      });
-    }
+  // Step 3: Place mines at the first 'mines' number of shuffled tileIndices
+  for (let mineIndex = 0; mineIndex < mines; mineIndex++) {
+    const flatIndex = tileIndices[mineIndex];
+    const rowIndex = Math.floor(flatIndex / width);
+    const colIndex = flatIndex % width; 
+    board[rowIndex][colIndex].isMine = true;
+
+    // Step 4: Update adjacent tiles to increment their adjacent mine counts
+    directions.forEach(([dx, dy]) => {
+      const adjacentRow = rowIndex + dx;
+      const adjacentCol = colIndex + dy;
+
+      if (
+        adjacentRow >= 0 && adjacentRow < height && 
+        adjacentCol >= 0 && adjacentCol < width && 
+        !board[adjacentRow][adjacentCol].isMine
+      ) {
+        board[adjacentRow][adjacentCol].number += 1;
+      }
+    });
   }
 
   return board;

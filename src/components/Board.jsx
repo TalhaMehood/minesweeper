@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { directions } from '../constants';
 import { generateBoard } from '../utils/generateBoard';
 import { gameOverMessages, winningMessages } from '../utils/messages';
 import { getRandomMessage } from '../utils/utils';
 import Tile from './Tile';
-import { directions } from '../constants';
 
 const Board = ({ width, height, mines }) => {
   const [board, setBoard] = useState(generateBoard(width, height, mines));
@@ -44,20 +44,29 @@ const Board = ({ width, height, mines }) => {
 
   // Recursively reveals tiles
   const revealTile = (board, x, y) => {
-    if (x < 0 || x >= width || y < 0 || y >= height || board[x][y].isRevealed) {
-      return;
-    }
+    const stack = [[x, y]]; // Start with the clicked tile
+    const visited = new Set(); // Keep track of visited tiles
 
-    board[x][y].isRevealed = true;
+    while (stack.length > 0) {
+      const [currentX, currentY] = stack.pop();
 
-    if (board[x][y].number === 0) {
-      directions.forEach(([dx, dy]) => {
-        const newX = x + dx;
-        const newY = y + dy;
-        if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
-          revealTile(board, newX, newY);
-        }
-      });
+      // If out of bounds or already visited, skip this tile
+      if (currentX < 0 || currentX >= width || currentY < 0 || currentY >= height || visited.has(`${currentX},${currentY}`)) {
+        continue;
+      }
+
+      const tile = board[currentX][currentY];
+      tile.isRevealed = true;
+      visited.add(`${currentX},${currentY}`); // Mark this tile as visited
+
+      // If no adjacent mines, add neighboring tiles to the stack
+      if (tile.number === 0) {
+        directions.forEach(([dx, dy]) => {
+          const newX = currentX + dx;
+          const newY = currentY + dy;
+          stack.push([newX, newY]);
+        });
+      }
     }
   };
 

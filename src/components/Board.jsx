@@ -4,6 +4,7 @@ import { generateBoard } from '../utils/generateBoard';
 import { gameOverMessages, winningMessages } from '../utils/messages';
 import { getRandomMessage } from '../utils/utils';
 import Tile from './Tile';
+import { directions } from '../constants';
 
 const Board = ({ width, height, mines }) => {
   const [board, setBoard] = useState(generateBoard(width, height, mines));
@@ -35,9 +36,28 @@ const Board = ({ width, height, mines }) => {
         alert(getRandomMessage(gameOverMessages));
       }, 100);
     } else {
-      tile.isRevealed = true;
+      revealTile(newBoard, x, y); // Recursive reveal
       setBoard(newBoard);
       checkWin(newBoard);
+    }
+  };
+
+  // Recursively reveals tiles
+  const revealTile = (board, x, y) => {
+    if (x < 0 || x >= width || y < 0 || y >= height || board[x][y].isRevealed) {
+      return;
+    }
+
+    board[x][y].isRevealed = true;
+
+    if (board[x][y].number === 0) {
+      directions.forEach(([dx, dy]) => {
+        const newX = x + dx;
+        const newY = y + dy;
+        if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
+          revealTile(board, newX, newY);
+        }
+      });
     }
   };
 

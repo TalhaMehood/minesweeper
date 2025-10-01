@@ -60,7 +60,7 @@ If you don't have Node.js installed, follow the [Node.js download and installati
 ## Setup
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/minesweeper.git
+   git clone [https://github.com/yourusername/minesweeper.git](https://github.com/TalhaMehood/minesweeper.git)
    ```
 2. Navigate to the project directory:
    ```bash
